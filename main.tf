@@ -1,3 +1,9 @@
+# Add key for ssh connection
+resource "aws_key_pair" "fakeCorp" {
+  key_name   = "fakeCorp"
+  public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGBS4NpMRWpURsiNmj0zviuLlVM/DfjjlcvLddfmRh+w"
+}
+
 # Add security group for ssh
 resource "aws_security_group" "ssh" {
   name = "ssh"
@@ -46,12 +52,27 @@ resource "aws_security_group" "leet" {
   }
 }
 
-# Add key for ssh connection
-resource "aws_key_pair" "test" {
-  key_name   = "test"
-  public_key = "JnQJUcQVIX15lbSuNmKp4H20EMZoanZ3beZEf+eGOnE="
+output "key_name" {
+  value = aws_key_pair.fakeCorp.key_name
+}
+
+output "ssh_security_group" {
+  value = aws_security_group.ssh.name
+}
+
+output "http_security_group" {
+  value = aws_security_group.http.name
+}
+
+output "https_security_group" {
+  value = aws_security_group.https.name
 }
 
 module "developer" {
   source = "./developer"
+
+  key_name             = aws_key_pair.fakeCorp.key_name
+  ssh_security_group   = aws_security_group.ssh.name
+  http_security_group  = aws_security_group.http.name
+  https_security_group = aws_security_group.https.name
 }
