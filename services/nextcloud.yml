@@ -67,6 +67,15 @@
         directory_mode: '0644'
       become: yes
 
+    - name: make nextcloud docker-compose
+      ansible.builtin.template:
+        src: ./nextcloud/docker-compose.yml
+        dest: /opt/docker-compose.yml
+        owner: admin
+        group: admin
+        directory_mode: '0644'
+      become: yes
+
     - name: Create and start nextcloud containers
       community.docker.docker_compose:
         project_src: /opt/nextcloud

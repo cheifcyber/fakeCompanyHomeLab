@@ -66,6 +66,14 @@
         group: admin
         directory_mode: '0644'
       become: yes
+    - name: generate redmine docker compose
+      ansible.builtin.template:
+        src: ./redmine/docker-compose.yml
+        dest: /opt/docker-compose.yml
+        owner: admin
+        group: admin
+        directory_mode: '0644'
+      become: yes
 
     - name: Create and start redmine containers
       community.docker.docker_compose:

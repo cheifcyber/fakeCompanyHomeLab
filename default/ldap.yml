@@ -67,6 +67,15 @@
         directory_mode: '0644'
       become: yes
 
+    - name: generate ldap docker-compose 
+      ansible.builtin.template:
+        src: ./ldap/docker-compose.yml
+        dest: /opt/docker-compose.yml
+        owner: admin
+        group: admin
+        directory_mode: '0644'
+      become: yes
+
     - name: Create and start ldap containers
       community.docker.docker_compose:
         project_src: /opt/ldap
