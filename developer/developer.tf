@@ -47,7 +47,7 @@ resource "null_resource" "redminePlaybook" {
   depends_on = [aws_instance.redmine, ansible_host.redmine]
 
   provisioner "local-exec" {
-    command = "sleep 15 && ansible-playbook -i ./inventory.yml --extra-vars \"@../vars/yml\" ./developer/redmine.yml"
+    command = "sleep 15 && ansible-playbook -i ./inventory.yml --extra-vars \"@vars.yml\" ./developer/redmine.yml"
   }
 }
 
@@ -82,6 +82,6 @@ resource "null_resource" "forgejoPlaybook" {
   depends_on = [aws_instance.forgejo, ansible_host.forgejo]
 
   provisioner "local-exec" {
-    command = "sleep 15 && ansible-playbook -i ./inventory.yml --extra-vars \"@./vars.yml\" ./developer/forgejo.yml"
+    command = "sleep 15 && ansible-playbook -i ./inventory.yml --extra-vars \"@vars.yml\" ./developer/forgejo.yml"
   }
 }

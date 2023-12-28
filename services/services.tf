@@ -47,6 +47,6 @@ resource "null_resource" "nextcloudPlaybook" {
   depends_on = [aws_instance.nextcloud, ansible_host.nextcloud]
 
   provisioner "local-exec" {
-    command = "sleep 15 && ansible-playbook -i ./inventory.yml --extra-vars \"@./vars.yml\" ./services/nextcloud.yml"
+    command = "sleep 15 && ansible-playbook -i ./inventory.yml --extra-vars \"@vars.yml\" ./services/nextcloud.yml"
   }
 }
