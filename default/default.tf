@@ -47,6 +47,6 @@ resource "null_resource" "ldapPlaybook" {
   depends_on = [aws_instance.ldap, ansible_host.ldap]
 
   provisioner "local-exec" {
-    command = "sleep 15 && ansible-playbook -i ./inventory.yml --extra-vars \"@../vars/yml\" ./default/ldap.yml"
+    command = "sleep 15 && ansible-playbook -i ./inventory.yml --extra-vars \"@./vars.yml\" ./default/ldap.yml"
   }
 }
