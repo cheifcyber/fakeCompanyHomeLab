@@ -1,12 +1,6 @@
 ---
 - hosts: redmine
-  become: yes
-  gather_facts: false
   tasks:
-    - wait_for_connection:
-
-    - setup:
-    
     - name: Install aptitude
       apt:
         name: aptitude
@@ -20,6 +14,7 @@
           - apt-transport-https
           - ca-certificates
           - curl
+          - locales-all
           - software-properties-common
           - gnupg
           - gpg
@@ -67,3 +62,22 @@
       ansible.builtin.debug:
         var: output
       become: yes
+
+    - name: Copy redmine data directory with owner and permissions
+      ansible.builtin.copy:
+        src: ./redmine
+        dest: /opt
+        owner: admin
+        group: admin
+        directory_mode: '0644'
+      become: yes
+
+    - name: Create and start redmine containers
+      community.docker.docker_compose:
+        project_src: /opt/redmine
+      become: yes
+      register: output
+
+    - name: Show results
+      ansible.builtin.debug:
+        var: output

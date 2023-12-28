@@ -52,6 +52,18 @@ resource "aws_security_group" "leet" {
   }
 }
 
+# Add security group for testHttp
+resource "aws_security_group" "testHttp" {
+  name = "testHttp"
+  ingress {
+    description = "testHttp"
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
 output "key_name" {
   value = aws_key_pair.fakeCorp.key_name
 }
@@ -68,6 +80,14 @@ output "https_security_group" {
   value = aws_security_group.https.name
 }
 
+output "leet_security_group" {
+  value = aws_security_group.leet.name
+}
+
+output "testHttp_security_group" {
+  value = aws_security_group.testHttp.name
+}
+
 module "developer" {
   source = "./developer"
 
@@ -75,4 +95,6 @@ module "developer" {
   ssh_security_group   = aws_security_group.ssh.name
   http_security_group  = aws_security_group.http.name
   https_security_group = aws_security_group.https.name
+  leet_security_group = aws_security_group.leet.name
+  testHttp_security_group = aws_security_group.testHttp.name
 }

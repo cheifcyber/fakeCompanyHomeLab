@@ -3,6 +3,9 @@ terraform {
     ansible = {
       source = "ansible/ansible"
     }
+    null = {
+      source = "hashicorp/null"
+    }
   }
 }
 
@@ -10,11 +13,8 @@ variable "key_name" {}
 variable "ssh_security_group" {}
 variable "http_security_group" {}
 variable "https_security_group" {}
-
-output "instance_public_ip" {
-  description = "Public IP of EC2 instance"
-  value       = aws_instance.redmine.public_ip
-}
+variable "leet_security_group" {}
+variable "testHttp_security_group" {}
 
 # Create ec2 instance
 resource "aws_instance" "redmine" {
@@ -28,21 +28,29 @@ resource "aws_instance" "redmine" {
   root_block_device {
     volume_size = 15
   }
-  security_groups = [var.ssh_security_group, var.http_security_group, var.https_security_group, "default"]
+  security_groups = [var.ssh_security_group, var.http_security_group, var.testHttp_security_group, "default"]
 }
 
 # Add created ec2 instance to ansible inventory
 resource "ansible_host" "redmine" {
-  name = aws_instance.redmine.public_dns
+  name   = aws_instance.redmine.public_ip
   groups = ["redmine"]
   variables = {
     ansible_user                 = "admin",
-    ansible_ssh_private_key_file = "../test.pem",
+    ansible_ssh_private_key_file = "/opt/keys/fakeCorp.pem",
     ansible_python_interpreter   = "/usr/bin/python3",
   }
 }
 
-resource "ansible_playbook" "redmine" {
-  playbook = "redmine.yml"
-  name = "redmine"
+# Ansible playbook terraform resource sucks so here you go
+resource "null_resource" "redminePlaybook" {
+  depends_on = [aws_instance.redmine, ansible_host.redmine]
+
+  provisioner "local-exec" {
+    command = "sleep 10 && ansible-playbook -i ./inventory.yml ./developer/redmine.yml"
+  }
+}
+
+output "public_ip" {
+  value = aws_instance.redmine.public_ip
 }
