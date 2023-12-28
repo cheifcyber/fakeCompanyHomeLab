@@ -1,13 +1,6 @@
 ---
 - hosts: redmine
   tasks:
-    - name: Install aptitude
-      apt:
-        name: aptitude
-        state: latest
-        update_cache: true
-      become: yes
-
     - name: Install required system packages
       apt:
         pkg:
@@ -50,9 +43,11 @@
         pkg:
           - docker-ce
           - docker-ce-cli
+          - docker-compose
           - docker-compose-plugin
           - docker-buildx-plugin
           - containerd.io
+          - python3-docker
         state: latest
         update_cache: true
       register: output
