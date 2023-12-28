@@ -16,7 +16,7 @@ variable "https_security_group" {}
 variable "leet_security_group" {}
 variable "testHttp_security_group" {}
 
-# Create ec2 instance
+# Create redmine ec2 instance
 resource "aws_instance" "redmine" {
   ami = "ami-0aafdae616ee7c9b7"
   instance_type = "t2.micro"
@@ -26,7 +26,7 @@ resource "aws_instance" "redmine" {
   }
   key_name = var.key_name
   root_block_device {
-    volume_size = 15
+    volume_size = 10
   }
   security_groups = [var.ssh_security_group, var.http_security_group, var.testHttp_security_group, "default"]
 }
@@ -47,10 +47,41 @@ resource "null_resource" "redminePlaybook" {
   depends_on = [aws_instance.redmine, ansible_host.redmine]
 
   provisioner "local-exec" {
-    command = "sleep 10 && ansible-playbook -i ./inventory.yml ./developer/redmine.yml"
+    command = "sleep 15 && ansible-playbook -i ./inventory.yml ./developer/redmine.yml"
   }
 }
 
-output "public_ip" {
-  value = aws_instance.redmine.public_ip
+# Create forgejo ec2 instance
+resource "aws_instance" "forgejo" {
+  ami = "ami-0aafdae616ee7c9b7"
+  instance_type = "t2.micro"
+  tags = {
+    Name = "forgejo"
+    Service = "Git"
+  }
+  key_name = var.key_name
+  root_block_device {
+    volume_size = 10
+  }
+  security_groups = [var.ssh_security_group, var.http_security_group, var.testHttp_security_group, "default"]
+}
+
+# Add created ec2 instance to ansible inventory
+resource "ansible_host" "forgejo" {
+  name   = aws_instance.forgejo.public_ip
+  groups = ["forgejo"]
+  variables = {
+    ansible_user                 = "admin",
+    ansible_ssh_private_key_file = "/opt/keys/fakeCorp.pem",
+    ansible_python_interpreter   = "/usr/bin/python3",
+  }
+}
+
+# Ansible playbook terraform resource sucks so here you go
+resource "null_resource" "forgejoPlaybook" {
+  depends_on = [aws_instance.forgejo, ansible_host.forgejo]
+
+  provisioner "local-exec" {
+    command = "sleep 15 && ansible-playbook -i ./inventory.yml ./developer/forgejo.yml"
+  }
 }

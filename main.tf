@@ -98,3 +98,14 @@ module "developer" {
   leet_security_group = aws_security_group.leet.name
   testHttp_security_group = aws_security_group.testHttp.name
 }
+
+module "default" {
+  source = "./default"
+
+  key_name             = aws_key_pair.fakeCorp.key_name
+  ssh_security_group   = aws_security_group.ssh.name
+  http_security_group  = aws_security_group.http.name
+  https_security_group = aws_security_group.https.name
+  leet_security_group = aws_security_group.leet.name
+  testHttp_security_group = aws_security_group.testHttp.name
+}
