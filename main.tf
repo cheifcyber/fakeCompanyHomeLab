@@ -99,8 +99,8 @@ module "developer" {
   testHttp_security_group = aws_security_group.testHttp.name
 }
 
-module "default" {
-  source = "./default"
+module "services" {
+  source = "./services"
 
   key_name             = aws_key_pair.fakeCorp.key_name
   ssh_security_group   = aws_security_group.ssh.name
