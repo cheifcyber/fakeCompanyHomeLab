@@ -63,7 +63,7 @@ resource "aws_instance" "forgejo" {
   root_block_device {
     volume_size = 10
   }
-  security_groups = [var.ssh_security_group, var.http_security_group, var.testHttp_security_group, "default"]
+  security_groups = [var.ssh_security_group, var.testHttp_security_group, var.leet_security_group, "default"]
 }
 
 # Add created ec2 instance to ansible inventory
