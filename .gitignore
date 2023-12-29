@@ -36,3 +36,7 @@ terraform.rc
 *.pem
 
 keys/
+
+.terraform*
+
+.terraform.lock.hcl
